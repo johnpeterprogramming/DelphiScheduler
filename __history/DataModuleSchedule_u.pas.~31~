@@ -1,0 +1,62 @@
+unit DataModuleSchedule_u;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, DB, ADODB;
+
+type
+  TdmSchedule = class(TDataModule)
+    procedure DataModuleCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    conSchedule : TADOConnection;
+    tblScheduleAccounts, tblScheduleStudents : TADOTable;
+    dsScheduleTable, dsScheduleQuery : TDataSource;
+    qrySchedule : TADOQuery;
+  end;
+
+var
+  dmSchedule: TdmSchedule;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+procedure TdmSchedule.DataModuleCreate(Sender: TObject);
+begin
+conSchedule := TADOConnection.Create( dmSchedule );
+tblScheduleAccounts := TADOTable.Create( dmSchedule );
+tblScheduleStudents := TADOTable.Create( dmSchedule );
+
+dsScheduleTable := TDataSource.Create( dmSchedule );
+dsScheduleQuery := TDataSource.Create( dmSchedule );
+
+qrySchedule := TADOQuery.Create( dmSchedule );
+
+
+conSchedule.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=Schedule.mdb;Mode=ReadWrite;Persist Security Info=False';
+conSchedule.LoginPrompt := false;
+conSchedule.Open;
+
+// Setup tables and query
+tblScheduleAccounts.Connection := conSchedule;
+tblScheduleAccounts.TableName := 'Accounts';
+
+// Setup Queries
+qrySchedule.Connection := conSchedule;
+//qrySchedule.DataSource := dsScheduleQuery;
+dsScheduleQuery.DataSet := qrySchedule;
+
+// Setup Datasource
+dsScheduleTable.DataSet := tblScheduleAccounts;
+dsScheduleTable.DataSet := tblScheduleStudents;
+
+tblSchedule.Open;
+end;
+
+end.

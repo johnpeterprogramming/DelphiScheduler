@@ -1,0 +1,55 @@
+unit DataModuleSchedule_u;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, DB,;
+
+type
+  TDataModule1 = class(TDataModule)
+    procedure DataModuleCreate(Sender: TObject);
+  private
+    { Private declarations }
+    conSchedule : TADOConnection;
+
+  public
+    { Public declarations }
+  end;
+
+var
+  dmSchedule: TDataModule1;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+{
+
+}
+procedure TDataModule1.DataModuleCreate(Sender: TObject);
+begin
+conSchedule := TADOConnection.Create( dmSchedule );
+tblStudents := TADOTable.Create( dmSchedule );
+dsUsers := TDataSource.Create( dmSchedule );
+qryUsers := TADOQuery.Create( dmSchedule );
+
+conSchedule.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=Schedule.mdb;Mode=ReadWrite;Persist Security Info=False';
+conSchedule.LoginPrompt := false;
+conSchedule.Open;
+
+// Setup tables and query
+tblStudents.Connection := conSchedule;
+tblStudents.TableName := 'Students';
+
+qryUsers.Connection := conSchedule;
+//qryUsers.DataSource := dsUsers;
+
+// Setup Datasource
+//dsUsers.DataSet := tblUsers;
+dsUsers.DataSet := qryUsers;
+
+tblStudents.Open;
+end;
+
+end.

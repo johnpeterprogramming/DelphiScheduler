@@ -1,0 +1,63 @@
+unit Class_u;
+
+interface
+
+type
+  cClass = class
+    private
+      timeSlotID, roomID, subjectKeyID : integer;
+      teachername : String;
+      // Up to 100 students in group : Students IDS
+      arrStudents : array[1..100] of integer;
+    public
+      constructor Encode(pTimeSlotID, pRoomID, pSubjectKeyID : integer);
+      function getKeyID: integer;
+  end;
+
+const
+  DEFAULT_ROOM_CAPACITY = 20;
+
+implementation
+
+{ cClass }
+
+constructor cClass.Encode(pTimeSlotID, pRoomID, pSubjectKeyID : integer);
+var
+  I: integer;
+begin
+  timeSlotID := pTimeSlotID;
+  roomID := pRoomID;
+  subjectKeyID := pSubjectKeyID;
+
+  //REPLACE WITH DATABASE/TEXTFILE LATER
+  case roomID of
+    1: teacherName := 'Kali';
+    2: teacherName := 'Lenie';
+    3: teacherName := 'Talita';
+    else teacherName := 'Default teacher';
+  end;
+
+  //Initizalise student array from database from groupID
+  // Based on subject KEY
+  case subjectKeyID of
+    1 : begin
+      arrStudents[1] := 1;
+      arrStudents[2] := 3;
+      arrStudents[3] := 4;
+    end;
+//    2 : begin
+//      arrStudents[1] := 1;
+//      arrStudents[2] := 2;
+//      arrStudents[3] := 3;
+//    end;
+    else
+    begin
+      arrStudents[1] := 3;
+      arrStudents[2] := 2;
+      arrStudents[3] := 1;
+    end;
+  end;
+
+end;
+
+end.

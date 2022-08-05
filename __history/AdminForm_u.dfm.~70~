@@ -1,0 +1,330 @@
+object AdminForm: TAdminForm
+  Left = 0
+  Top = 0
+  Caption = 'AdminForm'
+  ClientHeight = 536
+  ClientWidth = 927
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object AdminForm: TPageControl
+    Left = 8
+    Top = 8
+    Width = 921
+    Height = 520
+    ActivePage = tsAccounts
+    TabOrder = 0
+    object tsAccounts: TTabSheet
+      Caption = 'Accounts'
+      object Label1: TLabel
+        Left = 186
+        Top = 319
+        Width = 37
+        Height = 13
+        Caption = 'UserID:'
+      end
+      object Label2: TLabel
+        Left = 186
+        Top = 346
+        Width = 76
+        Height = 13
+        Caption = 'New Username:'
+      end
+      object Label3: TLabel
+        Left = 186
+        Top = 373
+        Width = 74
+        Height = 13
+        Caption = 'New Password:'
+      end
+      object Label7: TLabel
+        Left = 507
+        Top = 348
+        Width = 36
+        Height = 13
+        Caption = 'Subject'
+      end
+      object lblCount: TLabel
+        Left = 507
+        Top = 431
+        Width = 122
+        Height = 13
+        Caption = 'Amount of Students with '
+      end
+      object tblAdmin: TDBGrid
+        Left = 40
+        Top = 28
+        Width = 785
+        Height = 197
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+      end
+      object btnAddNew: TBitBtn
+        Left = 48
+        Top = 316
+        Width = 97
+        Height = 33
+        Caption = 'Add New User'
+        TabOrder = 1
+        OnClick = btnAddNewClick
+      end
+      object cbAdmin: TCheckBox
+        Left = 64
+        Top = 355
+        Width = 58
+        Height = 17
+        Caption = 'Admin?'
+        TabOrder = 2
+      end
+      object btnRemoveAccount: TBitBtn
+        Left = 48
+        Top = 435
+        Width = 97
+        Height = 33
+        Caption = 'Remove Account'
+        TabOrder = 3
+        OnClick = btnRemoveAccountClick
+      end
+      object btnEditAccount: TBitBtn
+        Left = 186
+        Top = 435
+        Width = 97
+        Height = 33
+        Caption = 'Edit Account'
+        TabOrder = 4
+        OnClick = btnEditAccountClick
+      end
+      object edtAccountID: TEdit
+        Left = 264
+        Top = 316
+        Width = 121
+        Height = 21
+        TabOrder = 5
+      end
+      object edtUsername: TEdit
+        Left = 264
+        Top = 343
+        Width = 121
+        Height = 21
+        TabOrder = 6
+      end
+      object edtPassword: TEdit
+        Left = 264
+        Top = 370
+        Width = 121
+        Height = 21
+        TabOrder = 7
+      end
+      object cbAdminEdit: TCheckBox
+        Left = 186
+        Top = 404
+        Width = 97
+        Height = 17
+        Caption = 'Admin?'
+        TabOrder = 8
+      end
+      object btnShowStudents: TBitBtn
+        Left = 747
+        Top = 400
+        Width = 102
+        Height = 25
+        Caption = 'Show Students'
+        TabOrder = 9
+        OnClick = btnShowStudentsClick
+      end
+      object tblQueries: TDBGrid
+        Left = 40
+        Top = 28
+        Width = 785
+        Height = 197
+        TabOrder = 10
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Visible = False
+      end
+      object cmbSubjects: TComboBox
+        Left = 549
+        Top = 345
+        Width = 145
+        Height = 21
+        TabOrder = 11
+        Text = 'Select a Subject'
+        Items.Strings = (
+          'Maths'
+          'Science'
+          'IT'
+          'English')
+      end
+      object btnSortBySubject: TBitBtn
+        Left = 507
+        Top = 314
+        Width = 87
+        Height = 25
+        Caption = 'Sort By Subject'
+        TabOrder = 12
+        OnClick = btnSortBySubjectClick
+      end
+      object btnCountBySubject: TBitBtn
+        Left = 507
+        Top = 400
+        Width = 94
+        Height = 25
+        Caption = 'Count By Subject'
+        TabOrder = 13
+        OnClick = btnCountBySubjectClick
+      end
+      object btnUnregistered: TBitBtn
+        Left = 744
+        Top = 314
+        Width = 105
+        Height = 25
+        Caption = 'Unregisterd Users'
+        TabOrder = 14
+        OnClick = btnUnregisteredClick
+      end
+    end
+    object tsScheduler: TTabSheet
+      Caption = 'Scheduler'
+      ImageIndex = 1
+      object lblNote: TLabel
+        Left = 32
+        Top = 440
+        Width = 174
+        Height = 13
+        Caption = 'Numbers represent the subject keys'
+        Visible = False
+      end
+      object Label4: TLabel
+        Left = 248
+        Top = 112
+        Width = 339
+        Height = 13
+        Caption = 
+          'Not recommended to change this value if database doesn'#39't corresp' +
+          'ond'
+      end
+      object Label5: TLabel
+        Left = 58
+        Top = 40
+        Width = 24
+        Height = 13
+        Caption = 'Days'
+      end
+      object Label6: TLabel
+        Left = 58
+        Top = 80
+        Width = 33
+        Height = 13
+        Caption = 'Blocks:'
+      end
+      object Label8: TLabel
+        Left = 58
+        Top = 112
+        Width = 45
+        Height = 13
+        Caption = 'Subjects:'
+      end
+      object sgSchedule: TStringGrid
+        Left = 32
+        Top = 208
+        Width = 425
+        Height = 209
+        ColCount = 6
+        GridLineWidth = 2
+        TabOrder = 0
+      end
+      object btnSetupValues: TBitBtn
+        Left = 121
+        Top = 144
+        Width = 121
+        Height = 33
+        Caption = 'btnSetupValues'
+        TabOrder = 1
+        OnClick = btnSetupValuesClick
+      end
+      object btnRunGA: TBitBtn
+        Left = 664
+        Top = 216
+        Width = 97
+        Height = 45
+        Caption = 'btnRunGA'
+        Enabled = False
+        TabOrder = 2
+        OnClick = btnRunGAClick
+      end
+      object redDisplay: TRichEdit
+        Left = 632
+        Top = 9
+        Width = 161
+        Height = 89
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 3
+        Visible = False
+        Zoom = 100
+      end
+      object btnSaveToTextFile: TBitBtn
+        Left = 664
+        Top = 340
+        Width = 97
+        Height = 45
+        Caption = 'Save Schedule'
+        Enabled = False
+        TabOrder = 4
+        OnClick = btnSaveToTextFileClick
+      end
+      object BitBtn2: TBitBtn
+        Left = 672
+        Top = 435
+        Width = 75
+        Height = 25
+        Kind = bkClose
+        NumGlyphs = 2
+        TabOrder = 5
+      end
+      object edtDays: TEdit
+        Left = 121
+        Top = 37
+        Width = 121
+        Height = 21
+        TabOrder = 6
+        Text = '2'
+      end
+      object edtBlocks: TEdit
+        Left = 121
+        Top = 77
+        Width = 121
+        Height = 21
+        TabOrder = 7
+        Text = '2'
+      end
+      object edtClasses: TEdit
+        Left = 121
+        Top = 109
+        Width = 121
+        Height = 21
+        TabOrder = 8
+        Text = '3'
+      end
+    end
+  end
+end

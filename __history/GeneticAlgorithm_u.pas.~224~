@@ -1,0 +1,161 @@
+unit GeneticAlgorithm_u;
+
+interface
+
+uses TimeTable_u, Math, Dialogs, SysUtils;
+
+type
+  GeneticAlgoClass = class
+  const
+    POPULATION_SIZE = 100;
+    TOURNAMENT_SIZE = 5;
+  private
+    { Private declarations }
+
+  public
+    { Public declarations }
+    population, bufferPopulation : array[1..POPULATION_SIZE] of TimeTable;
+    bestIndividual : TimeTable;
+    arrStudents : array of array of integer;
+
+    constructor generateInitialPopulation(pdays, pblocks, pclasses : integer);
+
+    procedure sortByFitness;
+    procedure run;
+
+
+  end;
+
+
+implementation
+
+uses DataModuleSchedule_u;
+
+
+constructor GeneticAlgoClass.generateInitialPopulation(pdays, pblocks, pclasses: integer);
+var
+  J, iStudNum, iStudentCount: Integer;
+begin
+
+// INITIALIZE ARRSTUDENTS
+with dmSchedule do
+begin
+  tblScheduleStudents.Sort := 'ID DESC';
+  tblScheduleStudents.First;
+  iStudentCount := tblScheduleStudents['ID'];
+
+  setlength(arrStudents, iStudentCount, 4);
+  iStudNum := 0;
+
+  while not tblScheduleStudents.Eof do
+  begin
+    arrStudents[iStudNum, 0] := tblScheduleStudents['ID'];
+    // ****Change later to make keys scalable based of input
+    arrStudents[iStudNum, 1] := tblScheduleStudents['Key0'];
+    arrStudents[iStudNum, 2] := tblScheduleStudents['Key1'];
+    arrStudents[iStudNum, 3] := tblScheduleStudents['Key2'];
+    inc(iStudNum);
+    tblScheduleStudents.Next;
+  end;
+end;
+
+// Initializes population with random timetables
+for J := 1 to POPULATION_SIZE do
+  population[J] := TimeTable.newRandom(pdays, pblocks, pclasses);
+
+end;
+
+
+procedure GeneticAlgoClass.run;
+var I, index, randomIndex, generation: Integer;
+tournamentWinner, elite1, elite2 : TimeTable;
+begin
+generation := 1;
+
+while true do
+begin
+  sortByFitness;
+  // Two of the best individuals will always be kept
+
+  if population[1].getFitness = 1 then
+    break;
+
+  if generation > 2000 then
+    break;
+
+  elite1 := TimeTable.fromExisting(population[1]);
+  elite2 := TimeTable.fromExisting(population[2]);
+
+//  showmessage('Generation: ' + inttostr(generation) + '; Fitness: ' + floattostr(elite1.getFitness));
+  inc(generation);
+
+  // Selection
+  index := 1;
+
+  for I := 1 to POPULATION_SIZE do
+    bufferPopulation[i] := TimeTable.fromExisting(population[i]);
+
+
+  // Uses Tournament selection until it fills population array to the 100th index
+  while index <= POPULATION_SIZE do
+  begin
+    tournamentWinner := bufferPopulation[RandomRange(1, POPULATION_SIZE+1)];
+    // Tournament size: 5 (Gets five random individuals and the best of them gets added)
+    for I := 1 to TOURNAMENT_SIZE do
+    begin
+      randomIndex := RandomRange(1, POPULATION_SIZE+1);
+      if bufferPopulation[randomIndex].getFitness > tournamentWinner.getFitness then
+        tournamentWinner := bufferPopulation[randomIndex];
+    end;
+    population[index] := tournamentWinner;
+    inc(index);
+  end;
+
+  index := 1;
+
+  while index <= POPULATION_SIZE do
+  begin
+    // CROSSOVER
+    population[index].uniformCrossover(population[index + 1]);
+
+    // MUTATION
+    population[index].uniformMutation;
+
+    inc(index);
+  end;
+
+  population[99] := elite1;
+  population[100] := elite2;
+
+
+end;
+// Main loop done; best fitness achieved!!!
+bestIndividual := population[1];
+
+end;
+
+
+procedure GeneticAlgoClass.sortByFitness;
+
+var
+  I, J: Integer;
+  bufferTable: TimeTable;
+begin
+
+for i := 1 to POPULATION_SIZE do
+  population[i].calcFitness;
+
+
+for I := 1 to POPULATION_SIZE-1 do
+  for J := I+1 to POPULATION_SIZE do
+  begin
+    if population[J].getFitness > population[I].getFitness then
+    begin
+      bufferTable := population[J];
+      population[J] := population[I];
+      population[I] := bufferTable;
+    end;
+  end;
+end;
+
+end.

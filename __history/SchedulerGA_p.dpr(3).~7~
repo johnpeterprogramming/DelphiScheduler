@@ -1,0 +1,18 @@
+program SchedulerGA_p;
+
+uses
+  Vcl.Forms,
+  Main_u in 'Main_u.pas' {Form1},
+  Class_u in 'Class_u.pas',
+  dmConnect_u in 'dmConnect_u.pas' {DataModule1: TDataModule},
+  TimeTable_u in 'TimeTable_u.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TDataModuleSchedule, DataModuleSchedule);
+  Application.Run;
+end.

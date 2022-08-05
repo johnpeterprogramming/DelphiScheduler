@@ -1,0 +1,276 @@
+unit TimeTable_u;
+
+interface
+
+uses SysUtils, Math, Vcl.Grids, Classes, Vcl.Dialogs, Vcl.DBGrids, Data.DB, Generics.Collections;
+
+type
+  TimeTable = class
+  const
+    MUTATION_RATE = 0.01;
+    CROSSOVER_RATE = 0.8;
+  private
+    //[1..DAYS_IN_SCHEDULE,1..BLOCKS_IN_DAY,1..CLASSES_IN_BLOCK] of Integer;
+    days_in_schedule, blocks_in_day, classes_in_block : integer;
+    fitness : real;
+  public
+    arrTimeTable : array of array of array of Integer;
+    arrStudents : array[0..3] of array of Integer;
+    constructor newRandom(pdays, pblocks, pclasses: integer);
+    constructor newEmpty(pdays, pblocks, pclasses: integer);
+    constructor fromExisting(existingClass : TimeTable);
+
+    procedure uniformCrossover(individual : TimeTable);
+    procedure uniformMutation;
+    procedure TimeTableToStringGrid(grid: TStringGrid; pUsername : string; isAdmin : boolean);
+    procedure calcFitness;
+
+    function printTimeTable: String;
+    function getFitness : real;
+    function textFileOutput : String;
+
+  end;
+
+implementation
+
+{ TimeTable }
+
+uses AdminForm_u, DataModuleSchedule_u;
+
+procedure TimeTable.calcFitness;
+var numCollisions, j, i, k: integer;
+
+FDictUsers, FDictSubjects: TDictionary<Integer, Integer>;
+iSubjectID, iUserID: integer;
+  z: Integer;
+
+begin
+numCollisions := 0;
+
+FDictUsers := TDictionary<Integer, Integer>.Create;
+FDictSubjects := TDictionary<Integer, Integer>.Create;
+
+// Ths algorithm goes through the time table and check if students will have collisions based on data from database(loaded into an array)
+for I := 0 to DAYS_IN_SCHEDULE-1 do
+begin
+  for J := 0 to BLOCKS_IN_DAY-1 do
+  begin
+    FDictUsers.Clear;
+    FDictSubjects.Clear;
+
+    for K := 0 to CLASSES_IN_BLOCK-1 do
+    begin
+      iSubjectID := arrTimeTable[I, J, K];
+
+      if not (iSubjectID = 0) then
+      begin
+
+        if not FDictSubjects.ContainsKey(iSubjectID) then
+          FDictSubjects.Add(iSubjectID, 0)
+        else
+          inc(numCollisions);
+
+        for z := 0 to length(gaClass.arrStudents)-1 do
+        begin
+          iUserID := gaClass.arrStudents[Z, 0];
+          if gaClass.arrStudents[Z, K] = iSubjectID then
+            if not FDictUsers.ContainsKey(iUserID) then
+              FDictUsers.Add(IUserID, 0)
+            else
+              inc(numCOllisions);
+        end;
+
+      end;
+    end;
+
+  end;
+end;
+
+fitness := 1/(numCollisions+1);
+
+end;
+
+constructor TimeTable.fromExisting(existingClass: TimeTable);
+var i, j, z : integer;
+begin
+days_in_schedule := existingClass.days_in_schedule;
+blocks_in_day := existingClass.blocks_in_day;
+classes_in_block := existingClass.classes_in_block;
+
+setlength(arrTimeTable, days_in_schedule, blocks_in_day, classes_in_block);
+
+// deep copies a TimeTable object
+for i := 0 to days_in_schedule-1 do
+   for j := 0 to blocks_in_day-1 do
+    for z := 0 to classes_in_block-1 do
+        arrTimeTable[i, j, z] := existingClass.arrTimeTable[i, j, z];
+
+end;
+
+function TimeTable.getFitness: real;
+begin
+result := fitness;
+end;
+
+constructor TimeTable.newEmpty(pdays, pblocks, pclasses: integer);
+var iDay, iBlock, iClass : integer;
+begin
+days_in_schedule := pdays;
+blocks_in_day := pblocks;
+classes_in_block := pclasses;
+setlength(arrTimeTable, pdays, pblocks, pclasses); // 0-2
+
+for iDay := 0 to days_in_schedule-1 do
+for iBlock := 0 to blocks_in_day-1 do
+for iClass := 0 to classes_in_block-1 do
+begin
+  arrTimeTable[iDay, iBlock, iClass] := 0;
+end;
+end;
+
+constructor TimeTable.newRandom(pdays, pblocks, pclasses: integer);
+var  iDay, iBlock, iClass, rndSubjectID: Integer;
+begin
+days_in_schedule := pdays;
+blocks_in_day := pblocks;
+classes_in_block := pclasses;
+
+setlength(arrTimeTable, days_in_schedule, blocks_in_day, classes_in_block);
+
+// INITIALIZE ARRTIMETABLE
+for iDay := 0 to days_in_schedule-1 do
+for iBlock := 0 to blocks_in_day-1 do
+for iClass := 0 to classes_in_block-1 do
+begin
+  rndSubjectID := RandomRange(0, classes_in_block+1);
+  arrTimeTable[iDay, iBlock, iClass] := rndSubjectID;
+end;
+
+
+end;
+
+function TimeTable.printTimeTable: String;
+var sLines : string;
+  i, j: Integer;
+  k: Integer;
+begin
+// for debugging, was replaced by TimeTableToStringGrid
+sLines := '             /------------------------\' + #13;
+sLines := sLines + '             ';
+for J := 0 to DAYS_IN_SCHEDULE-1 do
+  begin
+    sLines := sLines + '|Day ' + inttostr(J);
+    if (J = DAYS_IN_SCHEDULE) then
+      sLines := sLines + '|' + #13;
+  end;
+
+for I := 0 to BLOCKS_IN_DAY-1 do
+begin
+  sLines := sLines + 'Block ' + inttostr(I) + ': |';
+  for J := 0 to DAYS_IN_SCHEDULE-1 do
+  begin
+
+    for k := 0 to CLASSES_IN_BLOCK-1 do
+    begin
+      if not (arrTimeTable[J, I, K] = 0) then
+      begin
+      sLines := sLines + inttostr(arrTimeTable[J, I, K]);
+      if not (k = CLASSES_IN_BLOCK) then
+        sLines := sLines + ', ';
+      end;
+
+    end;
+    sLines := sLines + '|';
+  end;
+  sLines := sLines + #13 + '             |------------------------|' + #13 ;
+
+end;
+
+result := sLines;
+
+end;
+
+function TimeTable.textFileOutput: String;
+var sLine : string;
+  iDay: Integer;
+  iBlock: Integer;
+  iClass: Integer;
+begin
+sLine := inttostr(days_in_schedule) + inttostr(blocks_in_day) + inttostr(classes_in_block);
+
+for iDay := 0 to days_in_schedule-1 do
+  for iBlock := 0 to blocks_in_day-1 do
+    for iClass := 0 to classes_in_block-1 do
+      sLine := sLine + inttostr(arrTimeTable[iDay, iBlock, iClass]) + ',';
+
+
+result := sLine;
+end;
+
+procedure TimeTable.TimeTableToStringGrid(grid: TStringGrid; pUsername : string; isAdmin : boolean);
+var
+  iDay, iBlock, iClass, iSubjectID: Integer;
+  sLine : string;
+begin
+
+
+for iDay := 0 to days_in_schedule-1 do
+for iBlock := 0 to blocks_in_day-1 do
+begin
+sLine := '';
+for iClass := 0 to classes_in_block-1 do
+  if not (arrTimeTable[iDay, iBlock, iClass] = 0) then
+  begin
+    iSubjectID := arrTimeTable[iDay, iBlock, iClass];
+    if isAdmin then
+      sLine := sLine + ' ' +  inttostr(iSubjectID)
+    else
+    begin
+// **** change later to the student ID
+      if iSubjectID = gaClass.arrStudents[0, iClass] then
+      begin
+        with dmSchedule do
+        begin
+          tblScheduleSubjects.Locate('KeyID', iSubjectID, []);
+          sLine := sLine + tblScheduleSubjects['SubjectName'];
+        end;
+      end;
+
+    end;
+  end;
+
+grid.Cells[iDay+1, iBlock+1] := sLine;
+
+end;
+
+
+
+
+end;
+
+procedure TimeTable.uniformCrossover(individual: TimeTable);
+var
+  iDay, iBlock, iClass: integer;
+begin
+for iDay := 0 to DAYS_IN_SCHEDULE-1 do
+for iBlock := 0 to BLOCKS_IN_DAY-1 do
+for iClass := 0 to CLASSES_IN_BLOCK-1 do
+  begin
+    if Random() < CROSSOVER_RATE then
+      arrTimeTable[iDay, iBlock, iClass] := individual.arrTimeTable[iDay, iBlock, iClass];
+  end;
+end;
+
+procedure TimeTable.uniformMutation;
+var
+  iDay, iBlock, iClass: integer;
+begin
+for iDay := 0 to DAYS_IN_SCHEDULE-1 do
+for iBlock := 0 to BLOCKS_IN_DAY-1 do
+for iClass := 0 to CLASSES_IN_BLOCK-1  do
+  if Random() < MUTATION_RATE then
+    arrTimeTable[iDay, iBlock, iClass] := RandomRange(0, CLASSES_IN_BLOCK+1);
+
+end;
+
+end.

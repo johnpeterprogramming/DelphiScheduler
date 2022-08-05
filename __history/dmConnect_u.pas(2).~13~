@@ -1,0 +1,29 @@
+unit dmConnect_u;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, ADODB, DB;
+
+type
+  DataModuleSchedule = class(TDataModule)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    conSchedule : TADOConnection;
+    tblStudents : TADOTable;
+    dsUsers : TDataSource;
+    qryUsers : TADOQuery;
+  end;
+
+var
+  dmSchedule: DataModuleSchedule;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.

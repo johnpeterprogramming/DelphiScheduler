@@ -1,0 +1,19 @@
+program SchedulerGA_p;
+
+uses
+  Vcl.Forms,
+  TimeTable_u in 'TimeTable_u.pas',
+    GeneticAlgorithm_u in 'GeneticAlgorithm_u.pas',
+  DataModuleSchedule_u in 'DataModuleSchedule_u.pas',
+  LoginForm_u in 'LoginForm_u.pas';
+
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TLoginForm, LoginForm);
+  Application.CreateForm(TdmSchedule, dmSchedule);
+  Application.Run;
+end.

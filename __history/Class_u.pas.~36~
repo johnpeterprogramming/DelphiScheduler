@@ -1,0 +1,71 @@
+unit Class_u;
+
+interface
+
+type
+  cClass = class
+    private
+      timeSlotID, subjectID : integer;
+      subjectSection : String;
+    public
+      constructor Encode(pTimeSlotID, pRoomID, pGroupID : integer);
+  end;
+
+  rRoomRecord = record
+    id, capacity : integer;
+    teacherName : String;
+  end;
+
+  rGroupRecord = record
+    id : integer;
+    key, subject : string;
+    //Student IDs
+    // Up to 100 students in group
+    arrStudents : array[1..100] of integer;
+  end;
+
+const
+  DEFAULT_ROOM_CAPACITY = 20;
+
+var
+  groupRecordObj : rGroupRecord;
+  roomRecordObj : rRoomRecord;
+
+
+implementation
+
+{ cClass }
+
+constructor cClass.Encode(pTimeSlotID, pRoomID, pGroupID, pSubjectID: integer);
+var
+  I: integer;
+begin
+  // Instantiate Room Record
+  with roomRecordObj do
+  begin
+    id := pRoomID;
+    capacity := DEFAULT_ROOM_CAPACITY;
+    //REPLACE WITH DATABASE/TEXTFILE LATER
+    case pRoomID of
+      1: teacherName := 'Kali';
+      2: teacherName := 'Lenie';
+      3: teacherName := 'Talita';
+      else teacherName := 'Default teacher';
+    end;
+  end;
+
+  // Instantiate Group Record
+  with groupRecordObj do begin
+    id := pGroupID;
+    //Initizalise student array from database from groupID
+    arrStudents[1] := 1;
+    arrStudents[2] := 3;
+    arrStudents[3] := 4;
+  end;
+
+  timeSlotID := pTimeSlotID;
+  subjectID := pSubjectID;
+
+end;
+
+end.

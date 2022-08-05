@@ -1,0 +1,141 @@
+﻿unit Main_u;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, TimeTable_u, Vcl.StdCtrls, Vcl.ComCtrls, Math,
+  Vcl.Buttons;
+
+type
+  TForm1 = class(TForm)
+    redDisplay: TRichEdit;
+    BitBtn1: TBitBtn;
+    procedure BitBtn1Click(Sender: TObject);
+  const
+    POPULATION_SIZE = 100;
+    TOURNAMENT_SIZE = 5;
+    ELITISM_SIZE = 2;
+  private
+    { Private declarations }
+    population, bufferPopulation : array[1..POPULATION_SIZE] of TimeTable;
+  public
+    { Public declarations }
+    procedure generateInitialPopulation;
+    procedure sortByFitness;
+    procedure main;
+  end;
+
+var
+  Form1: TForm1;
+  objTimeTable : TimeTable;
+
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.BitBtn1Click(Sender: TObject);
+begin
+  main;
+end;
+
+procedure TForm1.generateInitialPopulation;
+var
+  i: Integer;
+begin
+  for i := 1 to POPULATION_SIZE do
+    population[I] := TimeTable.newRandom;
+end;
+
+procedure TForm1.main;
+var I, index, randomIndex, generation: Integer;
+tournamentWinner, child, elite1, elite2 : TimeTable;
+elites : array[1..ELITISM_SIZE] of TimeTable;
+begin
+
+generateInitialPopulation;
+generation := 1;
+
+while true do
+begin
+  sortByFitness;
+  // Two of the best individuals will always be kept
+
+  elite1 := population[1];
+  elite2 := population[2];
+
+  redDisplay.Lines.Add('Generation '+ inttostr(generation) + ' with fitness ' + floattostr(population[1].getFitness));
+  inc(generation);
+
+  if population[1].getFitness = 1 then
+    break;
+
+  if generation > 500 then
+    break;
+
+  // Selection
+  index := ELITISM_SIZE + 1;
+  bufferPopulation := population;
+
+  while index <= POPULATION_SIZE do
+  begin
+    tournamentWinner := bufferPopulation[RandomRange(1, POPULATION_SIZE+1)];
+    // Tournament size: 5
+    for I := 1 to TOURNAMENT_SIZE do
+    begin
+      randomIndex := RandomRange(1, POPULATION_SIZE+1);
+      if bufferPopulation[randomIndex].getFitness > tournamentWinner.getFitness then
+        tournamentWinner := bufferPopulation[randomIndex];
+    end;
+    population[index] := tournamentWinner;
+    inc(index);
+  end;
+
+  if not((population[1] = elite1) and (population[2] = elite2)) then
+    showmessage('Went wrong with selection');
+
+  index := 1;
+
+  while index <= 98 do//(POPULATION_SIZE - ELITISM_SIZE) do
+  begin
+    // CROSSOVER
+    child := TimeTable.uniformCrossover(population[index], population[index + 1]);
+
+    // MUTATION
+    population[index] := TimeTable.uniformMutation(child);
+
+    inc(index);
+  end;
+
+  population[99] := elite1;
+  population[100] := elite2;
+//  for i := 1 to ELITISM_SIZE do
+//    population[POPULATION_SIZE - ELITISM_SIZE + i] := elites[i];
+
+end;
+// Main loop done; best fitness achieved!!!
+
+redDisplay.Lines.Add(population[1].printTimeTable);
+showmessage('best individual with fitness:' + floattostr(population[1].getFitness));
+end;
+
+
+procedure TForm1.sortByFitness;
+var
+  I, J: Integer;
+  bufferTable: TimeTable;
+begin
+for I := 1 to POPULATION_SIZE-1 do
+  for J := I+1 to POPULATION_SIZE do
+  begin
+    if population[J].getFitness > population[I].getFitness then
+    begin
+      bufferTable := population[J];
+      population[J] := population[I];
+      population[I] := bufferTable;
+    end;
+  end;
+end;
+
+end.

@@ -1,0 +1,102 @@
+object LoginForm: TLoginForm
+  Left = 0
+  Top = 0
+  Caption = 'LoginForm'
+  ClientHeight = 561
+  ClientWidth = 939
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label1: TLabel
+    Left = 376
+    Top = 152
+    Width = 48
+    Height = 13
+    Caption = 'Username'
+  end
+  object Label2: TLabel
+    Left = 376
+    Top = 191
+    Width = 46
+    Height = 13
+    Caption = 'Password'
+  end
+  object Label3: TLabel
+    Left = 369
+    Top = 280
+    Width = 152
+    Height = 13
+    Caption = 'Don'#39't already have an account?'
+  end
+  object BitBtn1: TBitBtn
+    Left = 536
+    Top = 275
+    Width = 75
+    Height = 25
+    Caption = 'Sign Up'
+    TabOrder = 0
+  end
+  object edtUsername: TEdit
+    Left = 440
+    Top = 149
+    Width = 121
+    Height = 21
+    TabOrder = 1
+    Text = 'admin'
+  end
+  object edtPassword: TEdit
+    Left = 440
+    Top = 188
+    Width = 121
+    Height = 21
+    TabOrder = 2
+    Text = '1234'
+  end
+  object BitBtn2: TBitBtn
+    Left = 592
+    Top = 158
+    Width = 75
+    Height = 46
+    Caption = 'Log In'
+    TabOrder = 3
+    OnClick = BitBtn2Click
+  end
+  object tblAccounts: TDBGrid
+    Left = 368
+    Top = 336
+    Width = 193
+    Height = 73
+    TabOrder = 4
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    Visible = False
+  end
+  object BitBtn3: TBitBtn
+    Left = 672
+    Top = 512
+    Width = 75
+    Height = 25
+    Caption = 'BitBtn3'
+    TabOrder = 5
+    OnClick = BitBtn3Click
+  end
+  object edtInp: TEdit
+    Left = 672
+    Top = 485
+    Width = 121
+    Height = 21
+    TabOrder = 6
+    Text = 'edtInp'
+  end
+end

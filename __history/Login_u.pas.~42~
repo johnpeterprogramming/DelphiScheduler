@@ -1,0 +1,71 @@
+unit Login_u;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Data.DB,
+  Vcl.Grids, Vcl.DBGrids;
+
+type
+  TForm2 = class(TForm)
+    edtUsername: TEdit;
+    edtPassword: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    tblAccounts: TDBGrid;
+    procedure BitBtn2Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  LoginForm: TForm2;
+
+implementation
+
+{$R *.dfm}
+
+uses DataModuleSchedule_u;
+
+procedure TForm2.BitBtn2Click(Sender: TObject);
+var sUsername, sPassword : string;
+bLoggedIn, bIsAdmin : boolean;
+begin
+sUsername := edtUsername.Text;
+sPassword := edtPassword.Text;
+bLoggedIn := false;
+
+with dmSchedule do
+begin
+  tblSchedule.First;
+  while not tblSchedule.Eof do
+  begin
+    if (tblSchedule['Username'] = sUsername) and (tblSchedule['Password'] = sPassword) then
+    begin
+      bLoggedIn := true;
+      showmessage('Correct details');
+      sUsername := tblSchedule['Username'];
+      bIsAdmin := tblSchedule['Admin'];
+      break;
+    end else showmessage('Not correct details');
+
+    tblSchedule.Next;
+  end;
+end;
+
+end;
+
+procedure TForm2.FormShow(Sender: TObject);
+begin
+  tblAccounts.DataSource := dmSchedule.dsSchedule;
+end;
+
+end.

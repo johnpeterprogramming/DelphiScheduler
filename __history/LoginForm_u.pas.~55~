@@ -1,0 +1,88 @@
+unit LoginForm_u;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Data.DB,
+  Vcl.Grids, Vcl.DBGrids, Generics.Collections;
+
+type
+  TLoginForm = class(TForm)
+    BitBtn1: TBitBtn;
+    edtUsername: TEdit;
+    edtPassword: TEdit;
+    BitBtn2: TBitBtn;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    tblAccounts: TDBGrid;
+    procedure BitBtn2Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  LoginForm: TLoginForm;
+
+implementation
+
+{$R *.dfm}
+uses DataModuleSchedule_u, AdminForm_u, StudentForm_u;
+
+procedure TLoginForm.BitBtn2Click(Sender: TObject);
+var sUsername, sPassword : string;
+bIsAdmin, bIsLogged : boolean;
+begin
+sUsername := edtUsername.Text;
+sPassword := edtPassword.Text;
+bIsLogged := false;
+
+with dmSchedule do
+begin
+  tblScheduleAccounts.First;
+  while not tblScheduleAccounts.Eof do
+  begin
+    if (tblScheduleAccounts['Username'] = sUsername) and (tblScheduleAccounts['Password'] = sPassword) then
+    begin
+      bIsLogged := True;
+      break;
+    end;
+    tblScheduleAccounts.Next;
+  end;
+
+  if bIsLogged then
+  begin
+    sUsername := tblScheduleAccounts['Username'];
+    bIsAdmin := tblScheduleAccounts['Admin'];
+    if bIsAdmin then
+    begin
+      LoginForm.Hide;
+      AdminForm.sAdminName := sUsername;
+      AdminForm.Show;
+    end
+    else
+    begin  // Else user is a student
+      LoginForm.Hide;
+      StudentForm.sUsername := sUsername;
+      StudentForm.Show;
+    end;
+  end
+  else
+  begin
+    showmessage('Incorrect details, try again');
+  end;
+
+end;
+
+end;
+
+procedure TLoginForm.FormShow(Sender: TObject);
+begin
+  tblAccounts.DataSource := dmSchedule.dsScheduleAccounts;
+end;
+
+end.
